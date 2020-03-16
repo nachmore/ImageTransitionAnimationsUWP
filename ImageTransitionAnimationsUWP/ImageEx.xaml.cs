@@ -24,10 +24,13 @@ namespace ImageTransitionAnimationsUWP
       visualC = ElementCompositionPreview.GetElementVisual(canvas);
       animations = new Animations(compositor);
       visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
-      AnimationType = AnimationType.StackAndScaleFromLeft;
+      AnimationType = AnimationType.Random;
     }
 
     bool isFrontVisible = true;
+
+    private Array animationTypes = Enum.GetValues(typeof(AnimationType));
+    private Random random = new Random();
 
     private Compositor compositor;
     private Visual visualB;
@@ -190,9 +193,14 @@ namespace ImageTransitionAnimationsUWP
 
     private void Animate()
     {
-      Debug.WriteLine($"   -> Animate: {AnimationType}");
+      Animate(AnimationType);
+    }
 
-      switch (AnimationType)
+    private void Animate(AnimationType animationType)
+    {
+      Debug.WriteLine($"   -> Animate: {animationType}");
+
+      switch (animationType)
       {
         case AnimationType.Opacity:
           OpacityAnimation();
@@ -232,6 +240,16 @@ namespace ImageTransitionAnimationsUWP
           break;
         case AnimationType.StackAndScaleFromBottom:
           StackAndScaleAnimation(false, false);
+          break;
+        case AnimationType.Random:
+          AnimationType randomAnimation = AnimationType.Random;
+
+          while (randomAnimation == AnimationType.Random)
+          {
+            randomAnimation = (AnimationType)animationTypes.GetValue(random.Next(animationTypes.Length));
+          }
+
+          Animate(randomAnimation);
           break;
         default:
           break;

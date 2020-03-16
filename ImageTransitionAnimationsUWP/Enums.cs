@@ -20,6 +20,7 @@
         StackAndScaleFromLeft,
         StackAndScaleFromRight,
         StackAndScaleFromTop,
-        StackAndScaleFromBottom
+        StackAndScaleFromBottom,
+        Random
     }
 }
