@@ -160,7 +160,32 @@ namespace ImageTransitionAnimationsUWP
 
         private void OnImageUriChange()
         {
-            Animate();
+            Source = GetBitmapImage(ImageUri);
+        }
+
+        // Rendering a StorageFile from LocalCache doesn't work via uri (it seems that not everything likes the 
+        // ms-appdata:///localcache schema, so we should also support setting the BitmapImage directly
+
+        public BitmapImage Source
+        {
+            get { return (BitmapImage)GetValue(SourceProperty); }
+            set
+            {
+                SetValue(SourceProperty, value);
+            }
+        }
+
+        private static readonly DependencyProperty SourceProperty =
+          DependencyProperty.Register("Source", typeof(BitmapImage), typeof(ImageEx), new PropertyMetadata(null, new PropertyChangedCallback(OnSourceChanged)));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var imageEx = d as ImageEx;
+
+            if (imageEx != null)
+            {
+              imageEx.Animate();
+            }
         }
 
         private void Animate()
@@ -217,13 +242,13 @@ namespace ImageTransitionAnimationsUWP
         {
             if (isFrontVisible)
             {
-                imageB.Source = GetImage(ImageUri);
+                imageB.Source = Source;
                 visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
                 visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
             }
             else
             {
-                imageF.Source = GetImage(ImageUri);
+                imageF.Source = Source;
                 visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
                 visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
             }
@@ -233,13 +258,13 @@ namespace ImageTransitionAnimationsUWP
         {
             if (isFrontVisible)
             {
-                imageB.Source = GetImage(ImageUri);
+                imageB.Source = Source;
                 visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
                 visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
             }
             else
             {
-                imageF.Source = GetImage(ImageUri);
+                imageF.Source = Source;
                 visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
                 visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
             }
@@ -261,11 +286,11 @@ namespace ImageTransitionAnimationsUWP
             }
             if (isFrontVisible)
             {
-                imageB.Source = GetImage(ImageUri);
+                imageB.Source = Source;
             }
             else
             {
-                imageF.Source = GetImage(ImageUri);
+                imageF.Source = Source;
             }
             if (Direction == Direction.Next)
             {
@@ -300,12 +325,12 @@ namespace ImageTransitionAnimationsUWP
             int dir = fromLeftTop ? -1 : 1;
             if (isFrontVisible)
             {
-                imageB.Source = GetImage(ImageUri);
+                imageB.Source = Source;
                 visualB.Offset = new Vector3(0f, 0f, 0f);
             }
             else
             {
-                imageF.Source = GetImage(ImageUri);
+                imageF.Source = Source;
                 visualF.Offset = new Vector3(0f, 0f, 0f);
             }
             Vector3 vector;
@@ -363,12 +388,12 @@ namespace ImageTransitionAnimationsUWP
             int dir = fromLeftTop ? -1 : 1;
             if (isFrontVisible)
             {
-                imageB.Source = GetImage(ImageUri);
+                imageB.Source = Source;
                 visualB.Offset = new Vector3(0f, 0f, 0f);
             }
             else
             {
-                imageF.Source = GetImage(ImageUri);
+                imageF.Source = Source;
                 visualF.Offset = new Vector3(0f, 0f, 0f);
             }
             Vector3 vector;
@@ -460,7 +485,7 @@ namespace ImageTransitionAnimationsUWP
             {
                 if (isFrontVisible)
                 {
-                    imageB.Source = GetImage(ImageUri);
+                    imageB.Source = Source;
 
                     animationGroupB.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
                     animationGroupB.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -472,7 +497,7 @@ namespace ImageTransitionAnimationsUWP
                 }
                 else
                 {
-                    imageF.Source = GetImage(ImageUri);
+                    imageF.Source = Source;
 
                     animationGroupF.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
                     animationGroupF.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -487,7 +512,7 @@ namespace ImageTransitionAnimationsUWP
             {
                 if (isFrontVisible)
                 {
-                    imageB.Source = GetImage(ImageUri);
+                    imageB.Source = Source;
 
                     animationGroupB.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
                     animationGroupB.Add(animations.CreateScaleAnimation(big, vOne, Duration));
@@ -499,7 +524,7 @@ namespace ImageTransitionAnimationsUWP
                 }
                 else
                 {
-                    imageF.Source = GetImage(ImageUri);
+                    imageF.Source = Source;
 
                     animationGroupF.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
                     animationGroupF.Add(animations.CreateScaleAnimation(big, vOne, Duration));
@@ -512,7 +537,7 @@ namespace ImageTransitionAnimationsUWP
             }
         }
 
-        private BitmapImage GetImage(Uri uri)
+        private BitmapImage GetBitmapImage(Uri uri)
         {
             var bmp = new BitmapImage();
             bmp.DecodePixelHeight = ImageWidth;
