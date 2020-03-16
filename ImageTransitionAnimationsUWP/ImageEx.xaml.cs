@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -23,7 +24,7 @@ namespace ImageTransitionAnimationsUWP
       visualC = ElementCompositionPreview.GetElementVisual(canvas);
       animations = new Animations(compositor);
       visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
-      AnimationType = AnimationType.Opacity;
+      AnimationType = AnimationType.StackAndScaleFromLeft;
     }
 
     bool isFrontVisible = true;
@@ -36,9 +37,6 @@ namespace ImageTransitionAnimationsUWP
 
     private readonly Vector3 vZero = new Vector3(0f, 0f, 0f);
     private readonly Vector3 vOne = new Vector3(1f, 1f, 1f);
-
-    private int ImageWidth { get { return DecodePixelWidth; } }
-    private int ImageHeight { get { return DecodePixelHeight; } }
 
     public AnimationType AnimationType
     {
@@ -74,8 +72,8 @@ namespace ImageTransitionAnimationsUWP
         case AnimationType.StackFromRight:
         case AnimationType.StackFromTop:
         case AnimationType.StackFromBottom:
-          visualB.Offset = new Vector3(isFrontVisible ? ImageWidth : 0, 0f, 0f);
-          visualF.Offset = new Vector3(isFrontVisible ? 0 : ImageWidth, 0f, 0f);
+          visualB.Offset = new Vector3(isFrontVisible ? (int)ActualWidth : 0, 0f, 0f);
+          visualF.Offset = new Vector3(isFrontVisible ? 0 : (int)ActualWidth, 0f, 0f);
           visualF.Opacity = 1;
           visualB.Opacity = 1;
           break;
@@ -182,6 +180,8 @@ namespace ImageTransitionAnimationsUWP
     {
       var imageEx = d as ImageEx;
 
+      Debug.WriteLine("OnSourceChanged");
+
       if (imageEx != null)
       {
         imageEx.Animate();
@@ -190,6 +190,8 @@ namespace ImageTransitionAnimationsUWP
 
     private void Animate()
     {
+      Debug.WriteLine($"   -> Animate: {AnimationType}");
+
       switch (AnimationType)
       {
         case AnimationType.Opacity:
@@ -276,13 +278,13 @@ namespace ImageTransitionAnimationsUWP
       Vector3 rightBottom;
       if (horizontally)
       {
-        leftTop = new Vector3(ImageWidth, 0f, 0f);
-        rightBottom = new Vector3(-ImageWidth, 0f, 0f);
+        leftTop = new Vector3((int)ActualWidth, 0f, 0f);
+        rightBottom = new Vector3(-(int)ActualWidth, 0f, 0f);
       }
       else
       {
-        leftTop = new Vector3(0f, ImageHeight, 0f);
-        rightBottom = new Vector3(0f, -ImageHeight, 0f);
+        leftTop = new Vector3(0f, (int)ActualHeight, 0f);
+        rightBottom = new Vector3(0f, -(int)ActualHeight, 0f);
       }
       if (isFrontVisible)
       {
@@ -336,11 +338,11 @@ namespace ImageTransitionAnimationsUWP
       Vector3 vector;
       if (horizontally)
       {
-        vector = new Vector3(dir * ImageWidth, 0f, 0f);
+        vector = new Vector3(dir * (int)ActualWidth, 0f, 0f);
       }
       else
       {
-        vector = new Vector3(0f, dir * ImageHeight, 0f);
+        vector = new Vector3(0f, dir * (int)ActualHeight, 0f);
       }
       if (Direction == Direction.Next)
       {
@@ -399,11 +401,11 @@ namespace ImageTransitionAnimationsUWP
       Vector3 vector;
       if (horizontally)
       {
-        vector = new Vector3(dir * ImageWidth, 0f, 0f);
+        vector = new Vector3(dir * (int)ActualWidth, 0f, 0f);
       }
       else
       {
-        vector = new Vector3(0f, dir * ImageHeight, 0f);
+        vector = new Vector3(0f, dir * (int)ActualHeight, 0f);
       }
 
       if (Direction == Direction.Next)
@@ -540,8 +542,8 @@ namespace ImageTransitionAnimationsUWP
     private BitmapImage GetBitmapImage(Uri uri)
     {
       var bmp = new BitmapImage();
-      bmp.DecodePixelHeight = ImageWidth;
-      bmp.DecodePixelWidth = ImageWidth;
+      bmp.DecodePixelHeight = DecodePixelHeight;
+      bmp.DecodePixelWidth = DecodePixelWidth;
       bmp.DecodePixelType = DecodePixelType.Logical;
       bmp.UriSource = uri;
       return bmp;

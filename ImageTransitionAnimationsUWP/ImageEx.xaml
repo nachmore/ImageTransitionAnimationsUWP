@@ -10,19 +10,28 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Canvas 
-        x:Name="canvas" 
-        Height="{x:Bind DecodePixelHeight}"
-        Width="{x:Bind DecodePixelWidth}">
-        <Image
+    <Grid 
+        x:Name="grid" 
+        >
+    <Canvas x:Name="canvas">
+    <!--Height="{x:Bind DecodePixelHeight}"
+        Width="{x:Bind DecodePixelWidth}"-->
+      <Image
             x:Name="imageB"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
+            Height="{Binding ElementName=grid, Path=ActualHeight}"
+            Width="{Binding ElementName=grid, Path=ActualWidth}"
+            Stretch="Uniform"
             />
         <Image 
             x:Name="imageF"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
+            Height="{Binding ElementName=grid, Path=ActualHeight}"
+            Width="{Binding ElementName=grid, Path=ActualWidth}"
+            Stretch="Uniform"
             />
     </Canvas>
+  </Grid>
 </UserControl>
