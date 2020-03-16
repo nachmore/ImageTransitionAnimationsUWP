@@ -242,12 +242,12 @@ namespace ImageTransitionAnimationsUWP
           StackAndScaleAnimation(false, false);
           break;
         case AnimationType.Random:
-          AnimationType randomAnimation = AnimationType.Random;
+          AnimationType randomAnimation;
 
-          while (randomAnimation == AnimationType.Random)
+          do
           {
             randomAnimation = (AnimationType)animationTypes.GetValue(random.Next(animationTypes.Length));
-          }
+          } while (randomAnimation == AnimationType.Random);
 
           Animate(randomAnimation);
           break;
