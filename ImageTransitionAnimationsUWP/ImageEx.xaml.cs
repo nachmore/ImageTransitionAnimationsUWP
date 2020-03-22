@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,8 +14,10 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace ImageTransitionAnimationsUWP
 {
-  public sealed partial class ImageEx : UserControl
+  public sealed partial class ImageEx : UserControl, INotifyPropertyChanged
   {
+    private const Stretch DEFAULT_STRETCH = Stretch.Uniform;
+
     public ImageEx()
     {
       this.InitializeComponent();
@@ -25,6 +29,9 @@ namespace ImageTransitionAnimationsUWP
       animations = new Animations(compositor);
       visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
       AnimationType = AnimationType.Random;
+
+      HorizontalImageStretch = DEFAULT_STRETCH;
+      VerticalImageStretch = DEFAULT_STRETCH;
     }
 
     bool isFrontVisible = true;
@@ -114,25 +121,6 @@ namespace ImageTransitionAnimationsUWP
     public static readonly DependencyProperty DecodePixelWidthProperty =
         DependencyProperty.Register("DecodePixelWidth", typeof(int), typeof(int), null);
 
-    public Stretch Stretch
-    {
-      get { return (Stretch)GetValue(StretchProperty); }
-      set
-      {
-        SetValue(StretchProperty, value);
-        OnStretchChanged();
-      }
-    }
-
-    private void OnStretchChanged()
-    {
-      imageF.Stretch = Stretch;
-      imageB.Stretch = Stretch;
-    }
-
-    public static readonly DependencyProperty StretchProperty =
-        DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageEx), null);
-
     public TimeSpan Duration
     {
       get { return (TimeSpan)GetValue(DurationProperty); }
@@ -165,7 +153,7 @@ namespace ImageTransitionAnimationsUWP
     }
 
     // Rendering a StorageFile from LocalCache doesn't work via uri (it seems that not everything likes the 
-    // ms-appdata:///localcache schema, so we should also support setting the BitmapImage directly
+    // ms-appdata:///localcache schema) so we should also support setting the BitmapImage directly
 
     public BitmapImage Source
     {
@@ -183,13 +171,57 @@ namespace ImageTransitionAnimationsUWP
     {
       var imageEx = d as ImageEx;
 
-      Debug.WriteLine("OnSourceChanged");
-
       if (imageEx != null)
       {
+        if (imageEx.Source.PixelHeight > imageEx.Source.PixelWidth)
+        {
+          imageEx.Stretch = imageEx.VerticalImageStretch;
+        } 
+        else
+        {
+          imageEx.Stretch = imageEx.HorizontalImageStretch;
+        }
+
+        Debug.WriteLine($"ImageEx: Source Changed & Stretch set to {imageEx.Stretch}");
+
         imageEx.Animate();
       }
     }
+
+    private Stretch _stretch = DEFAULT_STRETCH;
+    public Stretch Stretch
+    {
+      get { return _stretch; }
+      set
+      {
+        _stretch = value;
+        OnPropertyChanged();
+      }
+    }
+
+    public Stretch HorizontalImageStretch
+    {
+      get { return (Stretch)GetValue(HorizontalImageStretchProperty); }
+      set
+      {
+        SetValue(HorizontalImageStretchProperty, value);
+      }
+    }
+
+    public static readonly DependencyProperty HorizontalImageStretchProperty =
+        DependencyProperty.Register("HorizontalImageStretch", typeof(Stretch), typeof(ImageEx), null);
+
+    public Stretch VerticalImageStretch
+    {
+      get { return (Stretch)GetValue(VerticalImageStretchProperty); }
+      set
+      {
+        SetValue(VerticalImageStretchProperty, value);
+      }
+    }
+
+    public static readonly DependencyProperty VerticalImageStretchProperty =
+        DependencyProperty.Register("VerticalImageStretch", typeof(Stretch), typeof(ImageEx), null);
 
     private void Animate()
     {
@@ -566,5 +598,14 @@ namespace ImageTransitionAnimationsUWP
       bmp.UriSource = uri;
       return bmp;
     }
+
+    #region INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    #endregion
   }
 }
