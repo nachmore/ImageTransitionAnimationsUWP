@@ -16,14 +16,14 @@
         >
     <Canvas x:Name="canvas">
       <Image
-            x:Name="imageB"
+            x:Name="imageBack"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"
             Width="{Binding ElementName=grid, Path=ActualWidth}"
             />
       <Image 
-            x:Name="imageF"
+            x:Name="imageFront"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"

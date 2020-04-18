@@ -23,8 +23,8 @@ namespace ImageTransitionAnimationsUWP
       this.InitializeComponent();
 
       compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-      visualB = ElementCompositionPreview.GetElementVisual(imageB);
-      visualF = ElementCompositionPreview.GetElementVisual(imageF);
+      visualB = ElementCompositionPreview.GetElementVisual(imageBack);
+      visualF = ElementCompositionPreview.GetElementVisual(imageFront);
       visualC = ElementCompositionPreview.GetElementVisual(canvas);
       animations = new Animations(compositor);
       visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
@@ -234,11 +234,11 @@ namespace ImageTransitionAnimationsUWP
       // applied to both images there is a jump in the visible image (if the Stretch value changes)
       if (isFrontVisible)
       {
-        imageB.Stretch = Stretch;
+        imageBack.Stretch = Stretch;
       }
       else
       {
-        imageF.Stretch = Stretch;
+        imageFront.Stretch = Stretch;
       }
 
       switch (animationType)
@@ -303,13 +303,13 @@ namespace ImageTransitionAnimationsUWP
     {
       if (isFrontVisible)
       {
-        imageB.Source = Source;
+        imageBack.Source = Source;
         visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
         visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
       }
       else
       {
-        imageF.Source = Source;
+        imageFront.Source = Source;
         visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
         visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
       }
@@ -319,13 +319,13 @@ namespace ImageTransitionAnimationsUWP
     {
       if (isFrontVisible)
       {
-        imageB.Source = Source;
+        imageBack.Source = Source;
         visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
         visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
       }
       else
       {
-        imageF.Source = Source;
+        imageFront.Source = Source;
         visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
         visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
       }
@@ -347,11 +347,11 @@ namespace ImageTransitionAnimationsUWP
       }
       if (isFrontVisible)
       {
-        imageB.Source = Source;
+        imageBack.Source = Source;
       }
       else
       {
-        imageF.Source = Source;
+        imageFront.Source = Source;
       }
       if (Direction == Direction.Next)
       {
@@ -397,18 +397,18 @@ namespace ImageTransitionAnimationsUWP
       if (isFrontVisible)
       {
 
-        oldImage = imageF;
+        oldImage = imageFront;
         oldVisual = visualF;
 
-        newImage = imageB;
+        newImage = imageBack;
         newVisual = visualB;
       }
       else
       {
-        oldImage = imageB;
+        oldImage = imageBack;
         oldVisual = visualB;
 
-        newImage = imageF;
+        newImage = imageFront;
         newVisual = visualF;
       }
 
@@ -450,12 +450,12 @@ namespace ImageTransitionAnimationsUWP
       int dir = fromLeftTop ? -1 : 1;
       if (isFrontVisible)
       {
-        imageB.Source = Source;
+        imageBack.Source = Source;
         visualB.Offset = new Vector3(0f, 0f, 0f);
       }
       else
       {
-        imageF.Source = Source;
+        imageFront.Source = Source;
         visualF.Offset = new Vector3(0f, 0f, 0f);
       }
       Vector3 vector;
@@ -472,8 +472,8 @@ namespace ImageTransitionAnimationsUWP
       {
         if (isFrontVisible)
         {
-          imageB.SetValue(Canvas.ZIndexProperty, 0);
-          imageF.SetValue(Canvas.ZIndexProperty, 1);
+          imageBack.SetValue(Canvas.ZIndexProperty, 0);
+          imageFront.SetValue(Canvas.ZIndexProperty, 1);
 
           animationGroupB.Add(animations.CreateOpacityAnimation(0.5f, 1f, Duration));
           animationGroupB.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -485,8 +485,8 @@ namespace ImageTransitionAnimationsUWP
         }
         else
         {
-          imageB.SetValue(Canvas.ZIndexProperty, 1);
-          imageF.SetValue(Canvas.ZIndexProperty, 0);
+          imageBack.SetValue(Canvas.ZIndexProperty, 1);
+          imageFront.SetValue(Canvas.ZIndexProperty, 0);
 
           animationGroupF.Add(animations.CreateOpacityAnimation(0.5f, 1f, Duration));
           animationGroupF.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -501,8 +501,8 @@ namespace ImageTransitionAnimationsUWP
       {
         if (isFrontVisible)
         {
-          imageB.SetValue(Canvas.ZIndexProperty, 1);
-          imageF.SetValue(Canvas.ZIndexProperty, 0);
+          imageBack.SetValue(Canvas.ZIndexProperty, 1);
+          imageFront.SetValue(Canvas.ZIndexProperty, 0);
 
           visualB.Opacity = 1;
           visualB.Scale = vOne;
@@ -516,8 +516,8 @@ namespace ImageTransitionAnimationsUWP
         }
         else
         {
-          imageB.SetValue(Canvas.ZIndexProperty, 0);
-          imageF.SetValue(Canvas.ZIndexProperty, 1);
+          imageBack.SetValue(Canvas.ZIndexProperty, 0);
+          imageFront.SetValue(Canvas.ZIndexProperty, 1);
 
           visualF.Opacity = 1;
           visualF.Scale = vOne;
@@ -547,7 +547,7 @@ namespace ImageTransitionAnimationsUWP
       {
         if (isFrontVisible)
         {
-          imageB.Source = Source;
+          imageBack.Source = Source;
 
           animationGroupB.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
           animationGroupB.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -559,7 +559,7 @@ namespace ImageTransitionAnimationsUWP
         }
         else
         {
-          imageF.Source = Source;
+          imageFront.Source = Source;
 
           animationGroupF.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
           animationGroupF.Add(animations.CreateScaleAnimation(small, vOne, Duration));
@@ -574,7 +574,7 @@ namespace ImageTransitionAnimationsUWP
       {
         if (isFrontVisible)
         {
-          imageB.Source = Source;
+          imageBack.Source = Source;
 
           animationGroupB.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
           animationGroupB.Add(animations.CreateScaleAnimation(big, vOne, Duration));
@@ -586,7 +586,7 @@ namespace ImageTransitionAnimationsUWP
         }
         else
         {
-          imageF.Source = Source;
+          imageFront.Source = Source;
 
           animationGroupF.Add(animations.CreateOpacityAnimation(0f, 1f, Duration));
           animationGroupF.Add(animations.CreateScaleAnimation(big, vOne, Duration));
