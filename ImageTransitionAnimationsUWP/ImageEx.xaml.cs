@@ -83,8 +83,6 @@ namespace ImageTransitionAnimationsUWP
         case AnimationType.StackFromRight:
         case AnimationType.StackFromTop:
         case AnimationType.StackFromBottom:
-          visualB.Offset = new Vector3(isFrontVisible ? (int)ActualWidth : 0, 0f, 0f);
-          visualF.Offset = new Vector3(isFrontVisible ? 0 : (int)ActualWidth, 0f, 0f);
           visualF.Opacity = 1;
           visualB.Opacity = 1;
           break;
@@ -385,55 +383,56 @@ namespace ImageTransitionAnimationsUWP
 
     private void StackHorizontalAnimation(bool horizontally, bool fromLeftTop)
     {
-      int dir = fromLeftTop ? -1 : 1;
+      int dir = fromLeftTop ? 1 : -1;
+
+      Vector3 oldImageEndVector;
+      Vector3 newImageStartVector;
+      
+      Image oldImage;
+      Image newImage;
+
+      Visual oldVisual;
+      Visual newVisual;
+
       if (isFrontVisible)
       {
-        imageB.Source = Source;
-        visualB.Offset = new Vector3(0f, 0f, 0f);
+
+        oldImage = imageF;
+        oldVisual = visualF;
+
+        newImage = imageB;
+        newVisual = visualB;
       }
       else
       {
-        imageF.Source = Source;
-        visualF.Offset = new Vector3(0f, 0f, 0f);
+        oldImage = imageB;
+        oldVisual = visualB;
+
+        newImage = imageF;
+        newVisual = visualF;
       }
-      Vector3 vector;
+
+      newImage.Source = Source;
+
       if (horizontally)
       {
-        vector = new Vector3(dir * (int)ActualWidth, 0f, 0f);
+        oldImageEndVector = new Vector3(dir * (int)ActualWidth, 0f, 0f);
+        newImageStartVector = new Vector3(-1 * dir * (int)ActualWidth, 0f, 0f); 
       }
       else
       {
-        vector = new Vector3(0f, dir * (int)ActualHeight, 0f);
+        oldImageEndVector = new Vector3(0f, dir * (int)ActualHeight, 0f);
+        newImageStartVector = new Vector3(0f, -1 * dir * (int)ActualHeight, 0f);
       }
+
+      // Not currently using Previous (just animate in reverse?)
       if (Direction == Direction.Next)
       {
-        if (isFrontVisible)
-        {
-          imageB.SetValue(Canvas.ZIndexProperty, 0);
-          imageF.SetValue(Canvas.ZIndexProperty, 1);
-          visualF.StartAnimation(nameof(visualB.Offset), animations.CreateSlideAnimation(vZero, vector, Duration));
-        }
-        else
-        {
-          imageB.SetValue(Canvas.ZIndexProperty, 1);
-          imageF.SetValue(Canvas.ZIndexProperty, 0);
-          visualB.StartAnimation(nameof(visualF.Offset), animations.CreateSlideAnimation(vZero, vector, Duration));
-        }
-      }
-      else
-      {
-        if (isFrontVisible)
-        {
-          imageB.SetValue(Canvas.ZIndexProperty, 1);
-          imageF.SetValue(Canvas.ZIndexProperty, 0);
-          visualB.StartAnimation(nameof(visualB.Offset), animations.CreateSlideAnimation(vector, vZero, Duration));
-        }
-        else
-        {
-          imageB.SetValue(Canvas.ZIndexProperty, 0);
-          imageF.SetValue(Canvas.ZIndexProperty, 1);
-          visualF.StartAnimation(nameof(visualF.Offset), animations.CreateSlideAnimation(vector, vZero, Duration));
-        }
+        newImage.SetValue(Canvas.ZIndexProperty, 0);
+        oldImage.SetValue(Canvas.ZIndexProperty, 1);
+
+        oldVisual.StartAnimation(nameof(visualF.Offset), animations.CreateSlideAnimation(vZero, oldImageEndVector, Duration));
+        newVisual.StartAnimation(nameof(visualB.Offset), animations.CreateSlideAnimation(newImageStartVector, vZero, Duration));
       }
     }
 
