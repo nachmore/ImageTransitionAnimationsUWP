@@ -25,9 +25,7 @@ namespace ImageTransitionAnimationsUWP
       compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
       visualB = ElementCompositionPreview.GetElementVisual(imageBack);
       visualF = ElementCompositionPreview.GetElementVisual(imageFront);
-      visualC = ElementCompositionPreview.GetElementVisual(canvas);
       animations = new Animations(compositor);
-      visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
 
       AnimationType = AnimationType.Random;
 
@@ -43,7 +41,6 @@ namespace ImageTransitionAnimationsUWP
     private Compositor compositor;
     private Visual visualB;
     private Visual visualF;
-    private Visual visualC;
     private Animations animations;
 
     private readonly Vector3 vZero = new Vector3(0f, 0f, 0f);
