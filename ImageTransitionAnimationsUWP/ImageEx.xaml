@@ -21,7 +21,6 @@
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"
             Width="{Binding ElementName=grid, Path=ActualWidth}"
-            Stretch="{Binding ElementName=ImageExControl, Path=Stretch}"
             />
       <Image 
             x:Name="imageF"
@@ -29,7 +28,6 @@
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"
             Width="{Binding ElementName=grid, Path=ActualWidth}"
-            Stretch="{Binding ElementName=ImageExControl, Path=Stretch}"
             />
     </Canvas>
   </Grid>

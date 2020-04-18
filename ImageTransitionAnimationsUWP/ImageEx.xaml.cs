@@ -28,6 +28,7 @@ namespace ImageTransitionAnimationsUWP
       visualC = ElementCompositionPreview.GetElementVisual(canvas);
       animations = new Animations(compositor);
       visualC.Clip = compositor.CreateInsetClip(0, 0, 0, 0);
+
       AnimationType = AnimationType.Random;
 
       HorizontalImageStretch = DEFAULT_STRETCH;
@@ -154,7 +155,6 @@ namespace ImageTransitionAnimationsUWP
 
     // Rendering a StorageFile from LocalCache doesn't work via uri (it seems that not everything likes the 
     // ms-appdata:///localcache schema) so we should also support setting the BitmapImage directly
-
     public BitmapImage Source
     {
       get { return (BitmapImage)GetValue(SourceProperty); }
@@ -176,7 +176,7 @@ namespace ImageTransitionAnimationsUWP
         if (imageEx.Source.PixelHeight > imageEx.Source.PixelWidth)
         {
           imageEx.Stretch = imageEx.VerticalImageStretch;
-        } 
+        }
         else
         {
           imageEx.Stretch = imageEx.HorizontalImageStretch;
@@ -231,6 +231,17 @@ namespace ImageTransitionAnimationsUWP
     private void Animate(AnimationType animationType)
     {
       Debug.WriteLine($"   -> Animate: {animationType}");
+
+      // Apply Stretch here, only for the active control. Otherwise, if new Stretch values get
+      // applied to both images there is a jump in the visible image (if the Stretch value changes)
+      if (isFrontVisible)
+      {
+        imageB.Stretch = Stretch;
+      }
+      else
+      {
+        imageF.Stretch = Stretch;
+      }
 
       switch (animationType)
       {
