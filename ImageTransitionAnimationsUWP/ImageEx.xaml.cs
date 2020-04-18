@@ -18,21 +18,6 @@ namespace ImageTransitionAnimationsUWP
   {
     private const Stretch DEFAULT_STRETCH = Stretch.Uniform;
 
-    public ImageEx()
-    {
-      this.InitializeComponent();
-
-      compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-      visualB = ElementCompositionPreview.GetElementVisual(imageBack);
-      visualF = ElementCompositionPreview.GetElementVisual(imageFront);
-      animations = new Animations(compositor);
-
-      AnimationType = AnimationType.Random;
-
-      HorizontalImageStretch = DEFAULT_STRETCH;
-      VerticalImageStretch = DEFAULT_STRETCH;
-    }
-
     bool isFrontVisible = true;
 
     private Array animationTypes = Enum.GetValues(typeof(AnimationType));
@@ -45,6 +30,27 @@ namespace ImageTransitionAnimationsUWP
 
     private readonly Vector3 vZero = new Vector3(0f, 0f, 0f);
     private readonly Vector3 vOne = new Vector3(1f, 1f, 1f);
+
+    private Image newImage;
+    private Image oldImage;
+
+    private Visual newVisual;
+    private Visual oldVisual;
+
+    public ImageEx()
+    {
+      this.InitializeComponent();
+
+      compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
+      visualB = ElementCompositionPreview.GetElementVisual(imageBack);
+      visualF = ElementCompositionPreview.GetElementVisual(imageFront);
+      animations = new Animations(compositor);
+
+      AnimationType = AnimationType.OpacitySpring;
+
+      HorizontalImageStretch = DEFAULT_STRETCH;
+      VerticalImageStretch = DEFAULT_STRETCH;
+    }
 
     public AnimationType AnimationType
     {
@@ -227,16 +233,30 @@ namespace ImageTransitionAnimationsUWP
     {
       Debug.WriteLine($"   -> Animate: {animationType}");
 
-      // Apply Stretch here, only for the active control. Otherwise, if new Stretch values get
-      // applied to both images there is a jump in the visible image (if the Stretch value changes)
+      // Avoid each animation having to duplicate code for depending on which image is visible
+      // by setting up these references that they can use to determine which image is coming in (new)
+      // and which is leaving (old)
       if (isFrontVisible)
       {
-        imageBack.Stretch = Stretch;
+
+        oldImage = imageFront;
+        oldVisual = visualF;
+
+        newImage = imageBack;
+        newVisual = visualB;
       }
       else
       {
-        imageFront.Stretch = Stretch;
+        oldImage = imageBack;
+        oldVisual = visualB;
+
+        newImage = imageFront;
+        newVisual = visualF;
       }
+
+      // Apply Stretch here, only for the active control. Otherwise, if new Stretch values get
+      // applied to both images there is a jump in the visible image (if the Stretch value changes)
+      newImage.Stretch = Stretch;
 
       switch (animationType)
       {
@@ -298,34 +318,18 @@ namespace ImageTransitionAnimationsUWP
 
     private void OpacityAnimation()
     {
-      if (isFrontVisible)
-      {
-        imageBack.Source = Source;
-        visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
-        visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
-      }
-      else
-      {
-        imageFront.Source = Source;
-        visualB.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
-        visualF.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
-      }
+      newImage.Source = Source;
+
+      oldVisual.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
+      newVisual.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
     }
 
     private void OpacitySpringAnimation()
     {
-      if (isFrontVisible)
-      {
-        imageBack.Source = Source;
-        visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
-        visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
-      }
-      else
-      {
-        imageFront.Source = Source;
-        visualB.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
-        visualF.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
-      }
+      newImage.Source = Source;
+
+      oldVisual.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
+      newVisual.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
     }
 
     private void SlideAnimation(bool horizontally)
@@ -385,30 +389,6 @@ namespace ImageTransitionAnimationsUWP
       Vector3 oldImageEndVector;
       Vector3 newImageStartVector;
       
-      Image oldImage;
-      Image newImage;
-
-      Visual oldVisual;
-      Visual newVisual;
-
-      if (isFrontVisible)
-      {
-
-        oldImage = imageFront;
-        oldVisual = visualF;
-
-        newImage = imageBack;
-        newVisual = visualB;
-      }
-      else
-      {
-        oldImage = imageBack;
-        oldVisual = visualB;
-
-        newImage = imageFront;
-        newVisual = visualF;
-      }
-
       newImage.Source = Source;
 
       if (horizontally)
