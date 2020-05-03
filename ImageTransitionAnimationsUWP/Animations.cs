@@ -52,7 +52,7 @@ namespace ImageTransitionAnimationsUWP
         {
             var animation = compositor.CreateSpringScalarAnimation();
             animation.InitialValue = startValue;
-            //animation.StopBehavior = AnimationStopBehavior.SetToFinalValue;
+            animation.StopBehavior = AnimationStopBehavior.SetToFinalValue;
             animation.Period = duration;
             animation.FinalValue = endValue;
             return animation;

@@ -46,7 +46,7 @@ namespace ImageTransitionAnimationsUWP
       visualF = ElementCompositionPreview.GetElementVisual(imageFront);
       animations = new Animations(compositor);
 
-      AnimationType = AnimationType.OpacitySpring;
+      AnimationType = AnimationType.Random;
 
       HorizontalImageStretch = DEFAULT_STRETCH;
       VerticalImageStretch = DEFAULT_STRETCH;
@@ -67,32 +67,7 @@ namespace ImageTransitionAnimationsUWP
 
     private void OnAnimationTypeChanged(AnimationType value)
     {
-      switch (value)
-      {
-        case AnimationType.Opacity:
-        case AnimationType.OpacitySpring:
-        case AnimationType.ScaleAndOpacity:
-          visualB.Offset = new Vector3(0f, 0f, 0f);
-          visualF.Offset = new Vector3(0f, 0f, 0f);
-          visualB.Opacity = isFrontVisible ? 0 : 1;
-          visualF.Opacity = isFrontVisible ? 1 : 0;
-          break;
-        case AnimationType.SlideHorizontally:
-        case AnimationType.SlideVertically:
-          visualF.Opacity = 1;
-          visualB.Opacity = 1;
-          break;
-        case AnimationType.StackFromLeft:
-        case AnimationType.StackFromRight:
-        case AnimationType.StackFromTop:
-        case AnimationType.StackFromBottom:
-          visualF.Opacity = 1;
-          visualB.Opacity = 1;
-          break;
-        default:
-
-          break;
-      }
+      
     }
 
     public Direction Direction
@@ -254,6 +229,9 @@ namespace ImageTransitionAnimationsUWP
         newVisual = visualF;
       }
 
+      visualF.Opacity = 1;
+      visualB.Opacity = 1;
+
       // Apply Stretch here, only for the active control. Otherwise, if new Stretch values get
       // applied to both images there is a jump in the visible image (if the Stretch value changes)
       newImage.Stretch = Stretch;
@@ -308,7 +286,8 @@ namespace ImageTransitionAnimationsUWP
           } while (randomAnimation == AnimationType.Random);
 
           Animate(randomAnimation);
-          break;
+          return;
+
         default:
           break;
       }
@@ -320,6 +299,9 @@ namespace ImageTransitionAnimationsUWP
     {
       newImage.Source = Source;
 
+      oldVisual.Offset = new Vector3(0f, 0f, 0f);
+      newVisual.Offset = new Vector3(0f, 0f, 0f);
+
       oldVisual.StartAnimation("Opacity", animations.CreateOpacityAnimation(1f, 0f, Duration));
       newVisual.StartAnimation("Opacity", animations.CreateOpacityAnimation(0f, 1f, Duration));
     }
@@ -327,6 +309,9 @@ namespace ImageTransitionAnimationsUWP
     private void OpacitySpringAnimation()
     {
       newImage.Source = Source;
+
+      oldVisual.Offset = new Vector3(0f, 0f, 0f);
+      newVisual.Offset = new Vector3(0f, 0f, 0f);
 
       oldVisual.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(1f, 0f, Duration));
       newVisual.StartAnimation("Opacity", animations.CreateOpacitySpringAnimation(0f, 1f, Duration));
@@ -516,6 +501,9 @@ namespace ImageTransitionAnimationsUWP
 
       visualB.CenterPoint = new Vector3((visualB.Size.X / 2.0f), (visualB.Size.Y / 2.0f), 0.0f);
       visualF.CenterPoint = new Vector3((visualF.Size.X / 2.0f), (visualF.Size.Y / 2.0f), 0.0f);
+
+      oldVisual.Offset = new Vector3(0f, 0f, 0f);
+      newVisual.Offset = new Vector3(0f, 0f, 0f);
 
       Vector3 small = new Vector3(0.7f, 0.7f, 7f);
       Vector3 big = new Vector3(1.4f, 1.4f, 1f);
