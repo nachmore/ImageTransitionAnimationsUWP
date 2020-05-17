@@ -39,7 +39,7 @@ namespace ImageTransitionAnimationsUWP
 
     public ImageEx()
     {
-      this.InitializeComponent();
+      InitializeComponent();
 
       compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
       visualB = ElementCompositionPreview.GetElementVisual(imageBack);
@@ -131,9 +131,9 @@ namespace ImageTransitionAnimationsUWP
 
     // Rendering a StorageFile from LocalCache doesn't work via uri (it seems that not everything likes the 
     // ms-appdata:///localcache schema) so we should also support setting the BitmapImage directly
-    public BitmapImage Source
+    public BitmapSource Source
     {
-      get { return (BitmapImage)GetValue(SourceProperty); }
+      get { return (BitmapSource)GetValue(SourceProperty); }
       set
       {
         SetValue(SourceProperty, value);
@@ -141,7 +141,7 @@ namespace ImageTransitionAnimationsUWP
     }
 
     private static readonly DependencyProperty SourceProperty =
-      DependencyProperty.Register("Source", typeof(BitmapImage), typeof(ImageEx), new PropertyMetadata(null, new PropertyChangedCallback(OnSourceChanged)));
+      DependencyProperty.Register("Source", typeof(BitmapSource), typeof(ImageEx), new PropertyMetadata(null, new PropertyChangedCallback(OnSourceChanged)));
 
     private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
