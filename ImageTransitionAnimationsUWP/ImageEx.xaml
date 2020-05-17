@@ -15,20 +15,28 @@
         x:Name="grid" 
         >
     <Canvas x:Name="canvas">
-      <Image
+      <!--
+        Borders are useful animation targets to work around XAML implicit animation changes:
+        http://blog.robmikh.com/uwp/xaml/composition/2016/07/16/changes-to-xaml-composition-interop.html
+       -->
+      <Border x:Name="imageBackContainer">
+        <Image
             x:Name="imageBack"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"
             Width="{Binding ElementName=grid, Path=ActualWidth}"
             />
-      <Image 
+      </Border>
+      <Border x:Name="imageFrontContainer">
+        <Image
             x:Name="imageFront"
             HorizontalAlignment="{Binding HorizontalAlignment, ElementName=MainControl}"
             VerticalAlignment="{Binding VerticalAlignment, ElementName=MainControl}"
             Height="{Binding ElementName=grid, Path=ActualHeight}"
             Width="{Binding ElementName=grid, Path=ActualWidth}"
             />
+      </Border>
     </Canvas>
   </Grid>
 </UserControl>

@@ -42,8 +42,8 @@ namespace ImageTransitionAnimationsUWP
       InitializeComponent();
 
       compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-      visualB = ElementCompositionPreview.GetElementVisual(imageBack);
-      visualF = ElementCompositionPreview.GetElementVisual(imageFront);
+      visualB = ElementCompositionPreview.GetElementVisual(imageBackContainer);
+      visualF = ElementCompositionPreview.GetElementVisual(imageFrontContainer);
       animations = new Animations(compositor);
 
       AnimationType = AnimationType.Random;
@@ -393,8 +393,8 @@ namespace ImageTransitionAnimationsUWP
         newImage.SetValue(Canvas.ZIndexProperty, 0);
         oldImage.SetValue(Canvas.ZIndexProperty, 1);
 
-        oldVisual.StartAnimation(nameof(visualF.Offset), animations.CreateSlideAnimation(vZero, oldImageEndVector, Duration));
-        newVisual.StartAnimation(nameof(visualB.Offset), animations.CreateSlideAnimation(newImageStartVector, vZero, Duration));
+        oldVisual.StartAnimation(nameof(oldVisual.Offset), animations.CreateSlideAnimation(vZero, oldImageEndVector, Duration));
+        newVisual.StartAnimation(nameof(oldVisual.Offset), animations.CreateSlideAnimation(newImageStartVector, vZero, Duration));
       }
     }
 
