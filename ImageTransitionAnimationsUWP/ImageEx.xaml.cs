@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -291,6 +292,22 @@ namespace ImageTransitionAnimationsUWP
         default:
           break;
       }
+
+      // ensure that the old visual is not visible. While rare, sometimes animations are halted mid way
+      // leaving artifacts on the screen.
+
+      // avoid cross thread polling of properties. Duration should be a small amount longer than the
+      // animation duration so that it doesn't kick in mid-way during an actual animation
+      var duration = (int)(Duration.TotalMilliseconds + 200);
+
+      var t = new Task(async () =>
+      {
+        await Task.Delay(duration);
+
+        oldVisual.Opacity = 0;
+      });
+
+      t.Start();
 
       isFrontVisible = !isFrontVisible;
     }
