@@ -209,6 +209,16 @@ namespace ImageTransitionAnimationsUWP
     {
       Debug.WriteLine($"   -> Animate: {animationType}");
 
+      if (animationType == AnimationType.Random)
+      {
+        do
+        {
+          animationType = (AnimationType)animationTypes.GetValue(random.Next(animationTypes.Length));
+        } while (animationType == AnimationType.Random);
+
+        Debug.WriteLine($"   ->    -> Random Animation: {animationType}");
+      }
+
       // Avoid each animation having to duplicate code for depending on which image is visible
       // by setting up these references that they can use to determine which image is coming in (new)
       // and which is leaving (old)
@@ -278,17 +288,6 @@ namespace ImageTransitionAnimationsUWP
         case AnimationType.StackAndScaleFromBottom:
           StackAndScaleAnimation(false, false);
           break;
-        case AnimationType.Random:
-          AnimationType randomAnimation;
-
-          do
-          {
-            randomAnimation = (AnimationType)animationTypes.GetValue(random.Next(animationTypes.Length));
-          } while (randomAnimation == AnimationType.Random);
-
-          Animate(randomAnimation);
-          return;
-
         default:
           break;
       }
